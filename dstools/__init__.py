@@ -1,5 +1,5 @@
 """Functions to iterate on common tasks related to exploring data to prepare it
-for linear regression modeling, and performing the modeling itself.
+for machine learning modeling, and performing the modeling itself.
 
 By Jessica Miles.
 """
@@ -103,12 +103,16 @@ def assign_cats(df_groups, df_records, ratio_map={}, seed=5):
 
     return new_df
 
-def explore_data(to_explore, df, target, hist=True, box=True, plot_v_target=True,
+def explore_data_cont(to_explore, df, target, hist=True, box=True, plot_v_target=True,
                  summarize=True, norm_check=True):
     """Creates plots and summary information intended to be useful in preparing
-    for linear regerssion modeling. Prints plots of distributions, a scatter
-    plot of each predictor column against a target, and outputs a dataframe of
-    metadata including results of a normality check and correlation coefficient.
+    for linear regression modeling. 
+    Prints plots of distributions, a scatterplot of each predictor column against 
+    a target, and outputs a dataframe of metadata including results of a normality 
+    check and correlation coefficient.
+
+    This function works best with a continuous target variable, although predictors
+    may be categorical.
 
     Returns: a dataframe representing the metadata collected.
     _____________________________
@@ -294,7 +298,7 @@ def explore_data(to_explore, df, target, hist=True, box=True, plot_v_target=True
                 uniques, mean, median])
             
         # Create catplot for categorical data
-        elif data_type in ['object', 'str']:
+        elif data_type in ['object', 'str', 'category']:
             # get variable to determine appropriate height based on number
             # of categories to be displayed
             h = len(df[col].value_counts())
@@ -311,6 +315,52 @@ def explore_data(to_explore, df, target, hist=True, box=True, plot_v_target=True
         
     df_meta = pd.DataFrame(data=meta_list[1:], columns=meta_list[0])
     return df_meta
+
+def explore_data_catbin(to_explore, df, target, pred_type='cat'):
+    """
+    Generates visualizations to explore the relationship between predictors
+    and a binary categorical target. Specify the type of predictors using the
+    `pred_type` parameter: accepted values are `cat` for categorical and 
+    `cont` for continuous.
+    
+    This function assumes a binary target.
+    
+    """
+    if pred_type not in ['cat', 'cont']:
+        print("Error: `pred_type` should be 'cat' for categorical\
+        predictors and 'cont' for continuous predictors. No other\
+        values accepted.")
+        return None
+    
+    disc = True if pred_type == 'cat' else False
+    
+    # get mean of target. Since target is binary, mean is representative
+    # of the proportion of 1 labels to 0 labels
+    pop_mean = np.round(df[target].mean(), 4)
+    
+    # draw plots
+    for col in to_explore:
+        fig, [ax1, ax2] = plt.subplots(figsize=(10, 5), nrows=1, ncols=2)
+        plt.tight_layout(pad=3)
+
+        sns.histplot(data=df, x=col, ax=ax1, discrete=disc)
+        ax1.set_title(f"Distribution of {col}")
+
+        if pred_type=='cat':
+
+            sns.pointplot(data=df, x=col, y=target, ci=68, ax=ax2, join=False,
+                         scale=1.5, capsize=0.05)
+            ax2.set_title("Target Mean per Category")
+            ax2.axhline(pop_mean, color='red', ls='dashed', label='population mean')
+            ax2.legend();
+            
+        elif pred_type=='cont':
+            
+            sns.boxenplot(data=df, x=col, y=target, ax=ax2, orient='h', width=1)
+            ax2.set_title("Feature Distribution Per Target Class");
+            
+    return None
+
 
 def preprocess(df, target, cont_cols, cat_cols=None, cat_drop=None, 
                standardize=True, std_cat=False, ttsplit=True, test_prop=0.25,

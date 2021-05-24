@@ -757,3 +757,120 @@ def iterate_model_sm(target, x_cols, df):
     plt.axhline(y=0, color='black')
     plt.show();
     return model
+
+def eval_clf_model(clf, X_test, y_test, X_train, y_train, score='macro',
+               reports=True, labels=['Class 0', 'Class 1']):
+    """Shows metrics and plots visualizations to interpret classifier model 
+    performance.
+    
+    ***
+    Args
+    
+    clf: classifier model to evaluate
+    
+    X_test: dataframe of test predictors
+    
+    y_test: dataframe of true target values
+    
+    X_train: dataframe (optional). Default is None. Provide training data if
+    you want to evaluate performance on train versus test; otherwise only 
+    test performance is evaluated.
+    
+    y_train: dataframe (optional). Default is None. Provide training data if
+    you want to evaluate performance on train versus test; otherwise only 
+    test performance is evaluated.
+    
+    scores: string (optional). Default is `std` to return standard F1, accuracy, 
+    and recall scores. Use `macro` to return macro F1 and recall, and balanced
+    accuracy. Scores are always returned, regardles of `reports` param.
+    
+    reports: boolean (optional). Default is True. Set to False to return only 
+    scores, not actual classification reports.
+    
+    labels: list (optional). Provide a list of labels for the target class.
+    """
+    spacer = '*'*30
+    
+    # Get predictions 1 time only, since they will be used in a few spots
+    test_preds = clf.predict(X_test)
+    train_preds = clf.predict(X_train)
+    
+    # print classification reports
+    if reports:
+        print(spacer + ' Training Data ' + spacer)
+        print(metrics.classification_report(y_train, train_preds))
+        print()
+        print(spacer + ' Test Data ' + spacer)
+        print(metrics.classification_report(y_test, test_preds))
+        print()
+    
+    # print scores from train and test next to each other for easy comparison
+    print(spacer + ' Training Scores ' + spacer)
+
+    # Train
+    if score == 'std':
+        train_f1 = np.round(metrics.f1_score(y_train, train_preds), 4)
+        print(f"                  Training F1 = {train_f1}")
+        train_r = np.round(metrics.recall_score(y_train, train_preds), 4)
+        print(f"              Training Recall = {train_r}")
+        train_acc = np.round(metrics.accuracy_score(y_train, train_preds), 4)
+        print(f"            Training Accuracy = {train_acc}")
+    elif score == 'macro':
+        train_f1m = np.round(metrics.f1_score(y_train, train_preds, average='macro'), 4)
+        print(f"            Training Macro F1 = {train_f1m}")
+        train_rm = np.round(metrics.recall_score(y_train, train_preds, average='macro'), 4)
+        print(f"        Training Macro Recall = {train_rm}")
+        train_accbal = np.round(metrics.balanced_accuracy_score(y_train, train_preds), 4)
+        print(f"   Training Balanced Accuracy = {train_accbal}")
+    print()
+    print(spacer + ' Test Scores ' + spacer)
+    
+    #Test
+    if score == 'std':
+        test_f1 = np.round(metrics.f1_score(y_test, test_preds), 4)
+        print(f"                      Test F1 = {test_f1}")
+        test_r = np.round(metrics.recall_score(y_test, test_preds), 4)
+        print(f"                  Test Recall = {test_r}")
+        test_acc = np.round(metrics.accuracy_score(y_test, test_preds), 4)
+        print(f"                Test Accuracy = {test_acc}")
+        
+    elif score == 'macro':
+        test_f1m = np.round(metrics.f1_score(y_test, test_preds, average='macro'), 4)
+        print(f"                Test Macro F1 = {test_f1m}")
+        test_rm = np.round(metrics.recall_score(y_test, test_preds, average='macro'), 4)
+        print(f"            Test Macro Recall = {test_rm}")
+        test_accbal = np.round(metrics.balanced_accuracy_score(y_test, test_preds), 4)
+        print(f"       Test Balanced Accuracy = {test_accbal}")
+    print()
+    print(spacer + ' Differences ' + spacer)
+    
+    #Diffs
+    if score == 'std':
+        print(f"               Train-Test F1 Diff = {test_f1 - train_f1}")       
+        print(f"           Train-Test Recall Diff = {test_r - train_r}")       
+        print(f"         Train-Test Accuracy Diff = {test_acc - train_acc}")     
+    elif score == 'macro':  
+        print(f"         Train-Test Macro F1 Diff = {test_f1m - train_f1m}")      
+        print(f"     Train-Test Macro Recall Diff = {test_rm - train_rm}")       
+        print(f"Train-Test Balanced Accuracy Diff = {test_accbal - train_accbal}")
+    
+    print()
+    print(spacer + ' Graphs for Test ' + spacer)
+    # plot graphs
+    auc = np.round(metrics.roc_auc_score(y_test, test_preds), 2)
+    ap = np.round(metrics.average_precision_score(y_test, test_preds), 2)
+    
+    fig, [ax1, ax2, ax3] = plt.subplots(figsize=[10, 3], nrows=1, ncols=3)
+    plt.tight_layout(pad=2.5)
+    metrics.plot_confusion_matrix(clf, X_test, y_test, normalize='true', 
+                              display_labels=labels, cmap='Reds', ax=ax1)
+    metrics.plot_roc_curve(clf, X_test, y_test, ax=ax2)
+    ax2.legend(loc='best', fontsize='small', labels=[f'AUC: {auc}'])
+    
+    metrics.plot_precision_recall_curve(clf, X_test, y_test, ax=ax3)
+    ax3.legend(loc='best', fontsize='small')
+    ax3.legend(loc='best', fontsize='small', labels=[f'AP: {ap}'])
+    plt.show();
+    
+    return None
+    

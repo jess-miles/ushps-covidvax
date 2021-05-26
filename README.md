@@ -45,7 +45,7 @@ In this analysis, I answer the questions:
   See data dictionary and survey technical information in the [data](./data) folder.
 
 ### Breakdown of vaccine sentiment in survey sample
-<img src="./images/vis1.png" width=90%>
+<img src="./images/vis1.png" width=50%>
 
 ### Hesitancy reasons (multi-choice)
 <img src="./images/vis2.png" width=90%>

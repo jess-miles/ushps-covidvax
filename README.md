@@ -72,20 +72,27 @@ Although these are the top predictors of hesitancy and we can see how percentage
 
 Percentages of hesitant respondents living in mobile homes, boats, RVs and vans are more than double the hesitant percentages of respondents in houses and apartments.
 
-<img src="./images/vis10.png" width=40%>
-<img src="./images/vis4.png" width=49%>
+<p float="left">
+    <img src="./images/vis10.png" width=40%>
+    <img src="./images/vis4.png" width=49%>
+</p>
 
 The more children residing in a household, the greater the percentage of sample respondents who reported hesitancy.
 
-<img src="./images/vis11.png" width=40%>
-<img src="./images/vis5.png" width=49%>
+<p float="left">
+    <img src="./images/vis11.png" width=40%>
+    <img src="./images/vis5.png" width=49%>
+</p>
 
 The more difficult is has been for the household to meet expenses in the prior 7 days, the greater percentage of hesitant respondents.
 
 More than twice as many "Very difficult" households were hesitant than "Not at all difficult", although concern about vaccine cost was one of the lowest reported reasons in the overall sample.
 
-<img src="./images/vis12.png" width=40%>
-<img src="./images/vis6.png" width=49%>
+<p float="left">
+    <img src="./images/vis12.png" width=40%>
+    <img src="./images/vis6.png" width=49%>
+</p>
+
 ***
 
 ### Top Hesitancy Reasons per Subgroup
@@ -123,8 +130,10 @@ The hesitant group is generally younger, with a median age of 46 compared to 57 
 
 Households in the lowest pre-tax income range (under $25k) are hesitant at twice the rate of those in the average income range $75 to 100k).
 
-<img src="./images/vis14.png" width=40%>
-<img src="./images/vis15.png" width=49%>
+<p float="left">
+    <img src="./images/vis14.png" width=40%>
+    <img src="./images/vis15.png" width=49%>
+</p>
 
 ***
 
